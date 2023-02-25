@@ -1,0 +1,148 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="dbnertModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="Order">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <NavigationProperty Name="UserOrders" Relationship="dbnertModel.FK_UserOrder_Orders" FromRole="Order" ToRole="UserOrder" />
+    <NavigationProperty Name="ProductOrders" Relationship="dbnertModel.FK_ProductOrder_Orders" FromRole="Order" ToRole="ProductOrder" />
+  </EntityType>
+  <EntityType Name="UserOrder">
+    <Key>
+      <PropertyRef Name="Id" />
+      <PropertyRef Name="OrderId" />
+      <PropertyRef Name="UserId" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="OrderId" Type="Int32" Nullable="false" />
+    <Property Name="UserId" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="Order" Relationship="dbnertModel.FK_UserOrder_Orders" FromRole="UserOrder" ToRole="Order" />
+    <NavigationProperty Name="User" Relationship="dbnertModel.FK_UserOrder_Users" FromRole="UserOrder" ToRole="User" />
+  </EntityType>
+  <EntityContainer Name="dbnertEntities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="Orders" EntityType="Self.Order" />
+    <EntitySet Name="UserOrders" EntityType="Self.UserOrder" />
+    <AssociationSet Name="FK_UserOrder_Orders" Association="dbnertModel.FK_UserOrder_Orders">
+      <End Role="Order" EntitySet="Orders" />
+      <End Role="UserOrder" EntitySet="UserOrders" />
+    </AssociationSet>
+    <EntitySet Name="Categories" EntityType="dbnertModel.Category" />
+    <EntitySet Name="ProductOrders" EntityType="dbnertModel.ProductOrder" />
+    <AssociationSet Name="FK_ProductOrder_Orders" Association="dbnertModel.FK_ProductOrder_Orders">
+      <End Role="Order" EntitySet="Orders" />
+      <End Role="ProductOrder" EntitySet="ProductOrders" />
+    </AssociationSet>
+    <EntitySet Name="Products" EntityType="dbnertModel.Product" />
+    <EntitySet Name="Users" EntityType="dbnertModel.User" />
+    <AssociationSet Name="FK_Product_Category" Association="dbnertModel.FK_Product_Category">
+      <End Role="Category" EntitySet="Categories" />
+      <End Role="Product" EntitySet="Products" />
+    </AssociationSet>
+    <AssociationSet Name="FK_ProductOrder_Product" Association="dbnertModel.FK_ProductOrder_Product">
+      <End Role="Product" EntitySet="Products" />
+      <End Role="ProductOrder" EntitySet="ProductOrders" />
+    </AssociationSet>
+    <AssociationSet Name="FK_UserOrder_Users" Association="dbnertModel.FK_UserOrder_Users">
+      <End Role="User" EntitySet="Users" />
+      <End Role="UserOrder" EntitySet="UserOrders" />
+    </AssociationSet>
+  </EntityContainer>
+  <Association Name="FK_UserOrder_Orders">
+    <End Type="dbnertModel.Order" Role="Order" Multiplicity="1" />
+    <End Type="dbnertModel.UserOrder" Role="UserOrder" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Order">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="UserOrder">
+        <PropertyRef Name="OrderId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityType Name="Category">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+    <NavigationProperty Name="Products" Relationship="dbnertModel.FK_Product_Category" FromRole="Category" ToRole="Product" />
+  </EntityType>
+  <EntityType Name="ProductOrder">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="ProductId" Type="Int32" Nullable="false" />
+    <Property Name="OrderId" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="Order" Relationship="dbnertModel.FK_ProductOrder_Orders" FromRole="ProductOrder" ToRole="Order" />
+    <NavigationProperty Name="Product" Relationship="dbnertModel.FK_ProductOrder_Product" FromRole="ProductOrder" ToRole="Product" />
+  </EntityType>
+  <Association Name="FK_ProductOrder_Orders">
+    <End Type="dbnertModel.Order" Role="Order" Multiplicity="1" />
+    <End Type="dbnertModel.ProductOrder" Role="ProductOrder" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Order">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="ProductOrder">
+        <PropertyRef Name="OrderId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityType Name="Product">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="Price" Type="Double" Nullable="false" />
+    <Property Name="CategoryId" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="Category" Relationship="dbnertModel.FK_Product_Category" FromRole="Product" ToRole="Category" />
+    <NavigationProperty Name="ProductOrders" Relationship="dbnertModel.FK_ProductOrder_Product" FromRole="Product" ToRole="ProductOrder" />
+  </EntityType>
+  <EntityType Name="User">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+    <NavigationProperty Name="UserOrders" Relationship="dbnertModel.FK_UserOrder_Users" FromRole="User" ToRole="UserOrder" />
+  </EntityType>
+  <Association Name="FK_Product_Category">
+    <End Type="dbnertModel.Category" Role="Category" Multiplicity="1" />
+    <End Type="dbnertModel.Product" Role="Product" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Category">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Product">
+        <PropertyRef Name="CategoryId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_ProductOrder_Product">
+    <End Type="dbnertModel.Product" Role="Product" Multiplicity="1" />
+    <End Type="dbnertModel.ProductOrder" Role="ProductOrder" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Product">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="ProductOrder">
+        <PropertyRef Name="ProductId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_UserOrder_Users">
+    <End Type="dbnertModel.User" Role="User" Multiplicity="1" />
+    <End Type="dbnertModel.UserOrder" Role="UserOrder" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="User">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="UserOrder">
+        <PropertyRef Name="UserId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+</Schema>
